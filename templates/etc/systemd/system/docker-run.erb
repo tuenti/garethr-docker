@@ -24,6 +24,9 @@ StartLimitBurst=5
 TimeoutStartSec=0
 RestartSec=5
 Environment="HOME=/root"
+<%- if @systemd_environment_file -%>
+EnvironmentFile=<%= @systemd_environment_file %>
+<%- end -%>
 <%- if @_syslog_identifier -%>
 SyslogIdentifier=<%= @_syslog_identifier %>
 <%- end -%>

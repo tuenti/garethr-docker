@@ -109,6 +109,8 @@ define docker::run(
   $remove_volume_on_stop = false,
   $stop_wait_time = 0,
   $syslog_identifier = undef,
+  $systemd_environment_file = undef,
+  $systemd_environment_file_contents = undef,
 ) {
   include docker::params
   if ($socket_connect != []) {
@@ -176,6 +178,13 @@ define docker::run(
   } else {
     validate_bool($detach)
     $valid_detach = $detach
+  }
+
+  if ($systemd_environment_file) {
+    file {"$systemd_environment_file":
+      ensure => present,
+      content => $systemd_environment_file_contents,
+    }
   }
 
   $extra_parameters_array = any2array($extra_parameters)
