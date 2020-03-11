@@ -344,6 +344,9 @@
 # [*storage_pool_autoextend_percent*]
 #   Extend the pool by specified percentage when threshold is hit.
 #
+# [*run_init_template*]
+#   Override the init template used by docker::run resources.
+#
 class docker(
   $version                           = $docker::params::version,
   $ensure                            = $docker::params::ensure,
@@ -438,6 +441,7 @@ class docker(
   $service_overrides_template        = $docker::params::service_overrides_template,
   $service_hasstatus                 = $docker::params::service_hasstatus,
   $service_hasrestart                = $docker::params::service_hasrestart,
+  $run_init_template                 = $docker::params::run_init_template,
 ) inherits docker::params {
 
   validate_string($version)

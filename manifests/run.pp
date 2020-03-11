@@ -59,6 +59,10 @@
 # configuration.  Most commonly used are on-failure or always.
 # Default: on-failure
 #
+# [*init_template*]
+# (optional) Service init template to be used.
+# Default: $docker::run_init_template
+#
 define docker::run(
   $image,
   $ensure = 'present',
@@ -109,6 +113,7 @@ define docker::run(
   $remove_volume_on_stop = false,
   $stop_wait_time = 0,
   $syslog_identifier = undef,
+  $init_template = $docker::run_init_template,
 ) {
   include docker::params
   if ($socket_connect != []) {
@@ -249,26 +254,22 @@ define docker::run(
         if ($::operatingsystem == 'Debian' and versioncmp($::operatingsystemmajrelease, '8') >= 0) or
           ($::operatingsystem == 'Ubuntu' and versioncmp($::operatingsystemrelease, '15.04') >= 0) {
           $initscript = "/etc/systemd/system/${service_prefix}${sanitised_title}.service"
-          $init_template = 'docker/etc/systemd/system/docker-run.erb'
           $uses_systemd = true
           $mode = '0644'
         } else {
           $uses_systemd = false
           $initscript = "/etc/init.d/${service_prefix}${sanitised_title}"
-          $init_template = 'docker/etc/init.d/docker-run.erb'
           $mode = '0755'
         }
       }
       'RedHat': {
         if ($::operatingsystem == 'Amazon') or (versioncmp($::operatingsystemrelease, '7.0') < 0) {
           $initscript     = "/etc/init.d/${service_prefix}${sanitised_title}"
-          $init_template  = 'docker/etc/init.d/docker-run.erb'
           $hasstatus      = undef
           $mode           = '0755'
           $uses_systemd   = false
         } else {
           $initscript     = "/etc/systemd/system/${service_prefix}${sanitised_title}.service"
-          $init_template  = 'docker/etc/systemd/system/docker-run.erb'
           $hasstatus      = true
           $mode           = '0644'
           $uses_systemd   = true
@@ -276,14 +277,12 @@ define docker::run(
       }
       'Archlinux': {
         $initscript     = "/etc/systemd/system/${service_prefix}${sanitised_title}.service"
-        $init_template  = 'docker/etc/systemd/system/docker-run.erb'
         $hasstatus      = true
         $mode           = '0644'
         $uses_systemd   = true
       }
       'Gentoo': {
         $initscript     = "/etc/init.d/${service_prefix}${sanitised_title}"
-        $init_template  = 'docker/etc/init.d/docker-run.gentoo.erb'
         $hasstatus      = true
         $mode           = '0775'
         $uses_systemd   = false

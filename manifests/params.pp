@@ -87,6 +87,7 @@ class docker::params {
             $service_overrides_template = 'docker/etc/systemd/system/docker.service.d/service-overrides-debian.conf.erb'
             $service_hasstatus       = true
             $service_hasrestart      = true
+            $run_init_template       = 'docker/etc/systemd/system/docker-run.erb'
             include docker::systemd_reload
           } else {
             $service_config_template = 'docker/etc/default/docker.erb'
@@ -95,6 +96,7 @@ class docker::params {
             $service_hasstatus       = true
             $service_hasrestart      = false
             $storage_config          = undef
+            $run_init_template       = 'docker/etc/init.d/docker-run.erb'
           }
         }
         default: {
@@ -106,6 +108,7 @@ class docker::params {
             $service_overrides_template = 'docker/etc/systemd/system/docker.service.d/service-overrides-debian.conf.erb'
             $service_hasstatus          = true
             $service_hasrestart         = true
+            $run_init_template          = 'docker/etc/systemd/system/docker-run.erb'
             include docker::systemd_reload
           } else {
             $service_provider           = undef
@@ -114,6 +117,7 @@ class docker::params {
             $service_overrides_template = undef
             $service_hasstatus          = undef
             $service_hasrestart         = undef
+            $run_init_template          = 'docker/etc/init.d/docker-run.erb'
           }
         }
       }
@@ -158,10 +162,12 @@ class docker::params {
         $service_provider           = 'systemd'
         $service_config_template    = 'docker/etc/sysconfig/docker.systemd.erb'
         $service_overrides_template = 'docker/etc/systemd/system/docker.service.d/service-overrides-rhel.conf.erb'
+        $run_init_template          = 'docker/etc/systemd/system/docker-run.erb'
       } else {
         $service_config_template    = 'docker/etc/sysconfig/docker.erb'
         $service_provider           = undef
         $service_overrides_template = undef
+        $run_init_template          = 'docker/etc/init.d/docker-run.erb'
       }
 
       if (versioncmp($::operatingsystemrelease, '7.0') < 0) and $::operatingsystem != 'Amazon' {
@@ -262,6 +268,7 @@ class docker::params {
       $storage_setup_file = undef
       $pin_upstream_package_source = undef
       $apt_source_pin_level = undef
+      $run_init_template    = 'docker/etc/systemd/system/docker-run.erb'
     }
     'Gentoo' : {
       $manage_epel = false
@@ -288,6 +295,7 @@ class docker::params {
       $storage_setup_file = undef
       $pin_upstream_package_source = undef
       $apt_source_pin_level = undef
+      $run_init_template  = 'docker/etc/init.d/docker-run.gentoo.erb'
     }
     default: {
       $manage_epel = false
